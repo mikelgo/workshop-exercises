@@ -1,6 +1,6 @@
 # Exercise 10: Movie Detail Page
 
-It's time to wrap it all up, the detail page gives us features to implement:
+It's time to wrap it all up, the detail page will let us implement and recap the following features:
 * lazy loaded routing
 * router params
 * structural directives

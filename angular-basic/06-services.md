@@ -1,4 +1,4 @@
-# Exercise 7: Services, Dependency Injection & Interceptors
+# Exercise 6: Services, Dependency Injection & Interceptors
 
 ## introduce MovieService
 
