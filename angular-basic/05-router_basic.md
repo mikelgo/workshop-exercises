@@ -1,12 +1,12 @@
 # Exercise 5: Router setup
 
-## create movie-list-page component
+## Create movie-list-page component
 
 ```bash
 ng g c movie/movie-list-page --module=movie
 ```
 
-move data-fetching to from `AppComponent` to `MovieListPageComponent`
+Move data-fetching from `AppComponent` to `MovieListPageComponent`
 
 ```ts
 // movie-list-page.component.ts
@@ -44,9 +44,9 @@ ngOnInit() {
 
 ```
 
-## setup routing for movie-page components
+## Setup routing for movie-page components
 
-create a const for the routes and add the import for the `RouterModule` to the `import` section
+Create a const for the routes and add the import for the `RouterModule` to the `import` section
 of the `MovieModule`
 
 ```ts
@@ -65,7 +65,7 @@ imports: [
 ]
 ```
 
-now add the `router-outlet` to the `AppComponent`s template. you can also remove any typescript code from the `AppComponent`
+Now add the `router-outlet` to the `AppComponent`'s template. you can also remove any typescript code from the `AppComponent`
 
 ```html
 <!-- app.component.html -->
@@ -75,7 +75,7 @@ now add the `router-outlet` to the `AppComponent`s template. you can also remove
 </app-shell>
 ```
 
-serve the application. you should see no output in the content section of the `AppComponent`. 
+Serve the application. you should see no output in the content section of the `AppComponent`. 
 Change the url in the address bar to `http://localhost:4200/list/popular`. You should see movie-list-page being rendered now.
 
 ## Router Configuration
@@ -96,11 +96,11 @@ RouterModule.forRoot([
 
 ```
 
-serve the application and navigate to `/`. You should get redirected to the list/popular route now.
+Serve the application and navigate to `/`. You should get redirected to the list/popular route now.
 
 ## 404 page
 
-please try to enter any invalid route into the address-bar of your browser (e.g. `list/populardawdaw`), you will see the application navigates back to the default
+Please try to enter any invalid route into the address-bar of your browser (e.g. `list/populardawdaw`), you will see the application navigates back to the default
 route and throw an error in the console
 
 `Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'list/populardawdaw'`
@@ -157,15 +157,15 @@ RouterModule.forRoot([
 ])
 ```
 
-serve the application and again try enter an invalid url. the application now should display the 404 page component instead
+Serve the application and again try enter an invalid url. the application now should display the 404 page component instead
 
-## routerLink
+## `routerLink`
 
-now we have a beautiful 404 page showing the user he did something wrong, but there is yet no chance for him to recover to
+Now we have a beautiful 404 page showing the user he did something wrong, but there is yet no chance for him to recover to
 a proper state of the application without touching the address bar.  
 We want to give the user the possibility to navigate back to the popular list when he is on a wrong path.
 
-go to `NotFoundComponent` and insert a button with a `routerLink` Directive to setup routing to the popular list.
+Go to `NotFoundComponent` and insert a button with a `routerLink` Directive to setup routing to the popular list.
 
 ```html
 <!-- not-found.component.html -->
@@ -177,7 +177,7 @@ go to `NotFoundComponent` and insert a button with a `routerLink` Directive to s
 
 ```
 
-serve the application, enter an invalid url and hit see if the navigation works
+Serve the application, enter an invalid url and hit see if the navigation works
 
 ## Bonus
 
@@ -198,7 +198,7 @@ RouterModule.forRoot([
 
 Serve the application and start different routing processes while observing the console output in your devtools
 
-### useHash
+### `useHash`
 
 You can also try out different routing styles, e.g. by adding the `useHash` configuration param to your router config
 
@@ -212,4 +212,4 @@ RouterModule.forRoot([
 })
 ```
 
-serve the application and observe the different route styles in the address bar while navigating around the application
+Serve the application and observe the different route styles in the address bar while navigating around the application
