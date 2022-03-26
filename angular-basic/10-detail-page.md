@@ -11,14 +11,19 @@ It's time to wrap it all up, the detail page will let us implement and recap the
 
 ## Implement Movie Detail Page
 
-> TBD
-
 create module with basic lazy-loading router setup
 
 `ng g m movie/movie-detail-page`
 
 ```ts
 // movie-detail-page.module.ts
+
+const routes: Routes = [{
+    path: '',
+    component: MovieDetailPageComponent
+}];
+
+RouterModule.forChild(routes)
 
 ```
 
@@ -57,15 +62,87 @@ serve the application and navigate to `/movie` by typing it into the address bar
 
 ## Add dynamic routing
 
-> TBD
+```ts
+// app.module.ts
 
-* setup routing to movie-detail
+{
+    path: 'movie/:id',
+        loadChildren: () => import('./movie/movie-detail-page/movie-detail-page.module')
+    .then(m => m.MovieDetailPageModule)
+},
+
+```
+
+```ts
+// movie-detail-page.component.ts
+
+movie$: Observable<TMDBMovieDetailsModel>;
+
+constructor(
+    private movieService: MovieService,
+    private activatedRoute: ActivatedRoute
+) { }
+
+ngOnInit(): void {
+    this.activatedRoute.params.subscribe(params => {
+        if (params.id) {
+            this.movie$ = this.movieService.getMovie(params.id);
+        }
+    })
+}
+```
+
+go to `MovieListComponent` and finally make use of the click binding we introduced in the beginning
+
+```ts
+// movie-list.component.ts
+
+constructor(private router: Router) {}
+
+onMovieClick(movie: MovieModel) {
+    this.router.navigate(['/movie', movie.id]);
+}
+
+```
+
+we also need to adjust the click binding slightly. We want to pass the `MovieModel` object instead of the `$event` variable.
+
+```html
+
+<movie-card
+    *ngFor="let movie of movies"
+    (movieClicked)="onMovieClick(movie)"
+    [movie]="movie"></movie-card>
+```
+
+serve the application, try to navigate to the `MovieDetailPageComponent` when clicking on a movie card
+
+### Bonus: use routerLink instead of click binding
+
+implement the `routerLink` directive to navigate to the `MovieDetailPageComponent` instead of using the click binding 
+
+## use data in template
+
+```html
+<!-- movie-detail-page.component.html -->
+*ngIf="movie$ | async as movie;"
+
+```
 
 ## loading state
 
-> TBD
+```html
+<!-- movie-detail-page.component.html -->
 
-## Back button, imdb link, youtube link
+*ngIf="movie$ | async as movie; else: loader"
+
+<ng-template #loader>
+    <div class="loader"></div>
+</ng-template>
+
+```
+
+## Back button, imdb link
 
 > TBD
 
