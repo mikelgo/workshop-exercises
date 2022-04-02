@@ -1,4 +1,4 @@
-# Exercise 4: structural directives, NgModule & HttpClient
+# Exercise 5: structural directives, NgModule & HttpClient
 
 ## *ngIf to display missing-movie state
 

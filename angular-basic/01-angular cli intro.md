@@ -1,5 +1,9 @@
 # Exercise 1: angular setup
 
+This exercise should be seen as an introduction session into the `@angular/cli`.
+You will learn all the basic commands you need to know in order make your live as a developer easier
+when maintaining an angular project.
+
 ## Install global cli
 
 ```bash
@@ -87,12 +91,12 @@ as a bonus you might even want to try to fix the test case if it's failing for y
 ## add a dependency
 
 ```bash
-ng add @angular/material
+ng add @angular/material@12
 ```
 
 ## (update a dependency)
 
-> for this to work we should add @angular/material@someVersion ? 
+> for this to work you need to have added @angular/material with version 12 :) 
 
 ```bash
 ng update @angular/material
@@ -101,10 +105,14 @@ ng update @angular/material
 
 ## build
 
+perform a build task, you don't have to run both of them :)
+
 ```bash
 ng build
 ng build --prod
 ```
+
+inspect the output in the `dist/` folder, your app should have been generated there
 
 ## caching
 

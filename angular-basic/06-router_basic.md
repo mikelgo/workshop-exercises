@@ -1,4 +1,4 @@
-# Exercise 5: Router setup
+# Exercise 6: Router setup
 
 ## create movie-list-page component
 

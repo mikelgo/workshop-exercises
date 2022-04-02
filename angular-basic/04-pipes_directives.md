@@ -1,4 +1,4 @@
-# Exercise 3: Pipes and Directives
+# Exercise 4: Pipes and Directives
 
 ## implement movie-image pipe
 
