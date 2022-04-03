@@ -20,7 +20,7 @@ go to `projects/movies/src/app/movie-image.pipe.ts`
 })
 export class MovieImagePipe implements PipeTransform {
     // we keep the args for now, we may need them later
-    transform(value: string, ...args: unknown[]): unknown {
+    transform(value: string, ...args: unknown[]): string {
         if (value) {
             return `https://image.tmdb.org/t/p/w300${value}`;
         }
@@ -43,46 +43,129 @@ try the pipe by setting the `poster_path` property in the `AppComponent` to an e
 
 The poster should now be displaying the fallback image
 
-## implement highlight directive
+## implement tilt directive
+
+now we want to add some funk to our component by letting it animate when we enter it with the mouse.
+
+generate the directive
 
 ```bash
-ng generate directive highlight
+ng generate directive tilt
 
 OR
 
-ng g d highlight
+ng g d tilt
 ```
 
-go to `projects/movies/src/app/highlight.directive`
+go to `projects/movies/src/app/tilt.directive`
 
 ```ts
 
 @Directive({
-    selector: '[highlight]'
+    selector: '[tilt]'
 })
 export class HighlightDirective {
     
-    @HostListener('mouseenter') 
-    onMouseenter(event: MouseEvent) {
-        
-    }
-    @HostListener('mousemove') 
-    onMousemove(event: MouseEvent) {
-        
-    }
-    @HostListener('mouseleave') 
-    onMouseleave(event: MouseEvent) {
-        
-    }
-    
-    @HostBinding('[style.background]') background: string;
+    constructor() {}
 }
 ```
+
+implement the `OnInit` `Interface` and the `ngOninit` Lifecycle hook and set up a private variable
+for the `ElementRef` in the constructor.
+
+> Tip: type it with `HTMLElement`, you will have an easier life
+
+```ts
+
+@Directive({
+    selector: '[tilt]'
+})
+export class HighlightDirective implements OnInit {
+    
+    constructor(private el: ElementRef) {}
+    
+    ngOnInit() {}
+    
+}
+```
+
+setup the eventListeners
+
+
+```ts
+
+nativeElement.addEventListener('mouseleave', () => {
+  // we want to reset the styles here
+});
+
+nativeElement.addEventListener('mouseenter', (event) => {
+  // 
+});
+```
+
+
+implement the reset and a simple animation
+
+
+```ts
+
+nativeElement.addEventListener('mouseleave', () => {
+    nativeElement.style.transform = 'rotate(0deg)';
+});
+
+nativeElement.addEventListener('mouseenter', () => {
+    nativeElement.style.transform = 'rotate(30deg)';
+});
+```
+
 
 ## use directive to highlight movie-card
 
 go to `projects/movies/src/app/app.component.html`
+or to `projects/movies/src/movie-card/movie-card.component.html`
 
 ```html
-<movie-card appHighlight></movie-card>
+<!-- app.component.html -->
+<movie-card tilt></movie-card>
+
+<!-- or -->
+
+<!-- movie-card.component.html -->
+<div class="movie-card" tilt>
+    <!-- template -->
+</div>
+
+```
+
+serve the application and test your result
+
+```bash
+ng serve
+```
+
+## implement the funk :-D
+
+now we want to add a more complex animation and tilt the movie-card according to the mouseposition on enter
+
+
+```ts
+
+  const pos = this.determineDirection(event.pageX);
+  this.el.nativeElement.style.transform = `rotate(${pos === 0 ? '22deg' : '-22deg'})`;
+
+  /**
+   *
+   * returns 0 if entered from left, 1 if entered from right
+   */
+  determineDirection(pos: number): 0 | 1 {
+    const width = this.el.nativeElement.clientWidth;
+    const middle = this.el.nativeElement.getBoundingClientRect().left + width / 2;
+    return (pos > middle ? 1 : 0);
+  }
+```
+
+serve the application and test your result
+
+```bash
+ng serve
 ```
