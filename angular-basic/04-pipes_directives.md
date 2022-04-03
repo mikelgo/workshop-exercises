@@ -64,7 +64,7 @@ go to `projects/movies/src/app/tilt.directive`
 @Directive({
     selector: '[tilt]'
 })
-export class HighlightDirective {
+export class TiltDirective {
     
     constructor() {}
 }
@@ -80,7 +80,7 @@ for the `ElementRef` in the constructor.
 @Directive({
     selector: '[tilt]'
 })
-export class HighlightDirective implements OnInit {
+export class TiltDirective implements OnInit {
     
     constructor(private el: ElementRef) {}
     
@@ -119,7 +119,7 @@ nativeElement.addEventListener('mouseenter', () => {
 ```
 
 
-## use directive to highlight movie-card
+## use directive to adjust behavior of movie-card
 
 go to `projects/movies/src/app/app.component.html`
 or to `projects/movies/src/movie-card/movie-card.component.html`
@@ -163,6 +163,37 @@ now we want to add a more complex animation and tilt the movie-card according to
     return (pos > middle ? 1 : 0);
   }
 ```
+
+serve the application and test your result
+
+```bash
+ng serve
+```
+
+## use HostBindings and HostListeners
+
+now we want to refactor our directive to the `angular way`, yaay!
+
+initialize the HostListeners and HostBindings needed for to replace our manual eventListeners and move the code accordingly.
+
+```ts
+
+@HostListener('mouseenter')
+onMouseenter(event: MouseEvent) {
+    
+}
+
+@HostListener('mouseleave')
+onMouseleave() {
+    
+}
+
+@HostBinding('style.transform')
+rotation;
+```
+
+
+in the end, you can get rid of the `OnInit` implementation.
 
 serve the application and test your result
 
