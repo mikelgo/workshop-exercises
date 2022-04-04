@@ -6,9 +6,9 @@ and also create our first template expressions in the `AppComponent`.
 ## install angular movies project
 
 ```bash
-git checkout git:....
+git clone git@github.com:push-based/angular-basic-040422.git
 
-cd angular-movies-workshop
+cd angular-basic-040422
 
 npm install
 ```
