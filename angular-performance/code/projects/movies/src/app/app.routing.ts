@@ -3,6 +3,7 @@ import { MovieListPageComponent } from './pages/movie-list-page/movie-list-page.
 import { MovieListPageModule } from './pages/movie-list-page/movie-list-page.module';
 
 const ROUTES: Routes = [
+  // Exercise 2: Replace this 2 routes
   {
     path: 'list-category/:category',
     component: MovieListPageComponent,

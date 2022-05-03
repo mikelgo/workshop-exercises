@@ -36,11 +36,11 @@ Provide them:
   ],
 ```
 
-Replace top level async pipe with `rxLet` directive:
+Replace top level async pipe with `rxLet` directive in `app-shell.component.html`:
 
-```html
+```
 <!-- Exercise 6: Replace it with rxLet  directive -->
-<ng-container *rxLet="viewState$; let vs"></ng-container>
+<ng-container *rxLet="viewState$; let vs">
 ```
 
 Replace `ngFor` with `rxFor`:
@@ -53,7 +53,12 @@ Replace `ngFor` with `rxFor`:
   class="navigation--link"
   [routerLink]="['/list', 'genre', genre.id]"
   routerLinkActive="active"
-></a>
+>
+  <div class="navigation--menu-item">
+    <svg-icon class="navigation--menu-item-icon" name="genre"></svg-icon>
+    {{ genre.name }}
+  </div>
+</a>
 ```
 
 As a result of this replacements we enabled local change detection in app shell and enabled chunked rendering for genres list.
@@ -85,7 +90,9 @@ Now we need to refactor a template.
 Go to `movie-list-page.component.html` and refactor header:
 
 ```html
-<header *rxLet="heading$; let heading">
+<!-- Exercise 6: Refactor header -->
+
+<header *rxLet="headings$; let heading">
   <h1 data-uf="header-main">{{ heading.main }}</h1>
   <h2 data-uf="header-sub">{{ heading.sub }}</h2>
 </header>
@@ -157,7 +164,9 @@ Now we will fix top level observable in `movie-list.component.ts` with `rxLet` a
 Go to `movie-list.component.ts` and do the following:
 
 ```html
-<ui-grid-list *rxLet="moviesListVisible$; rxSuspense: noData"></ui-grid-list>
+<ui-grid-list *rxLet="moviesListVisible$; rxSuspense: noData">
+  ...
+</ui-grid-list>
 ```
 
 Replace `ngFor` with `rxFor`:
@@ -167,7 +176,7 @@ Replace `ngFor` with `rxFor`:
 <a
   class="ui-grid-list-item"
   *rxFor="
-          let movie of movies$ | async;
+          let movie of movies$;
           index as idx;
           trackBy: trackByMovieId
         "

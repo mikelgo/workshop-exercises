@@ -48,12 +48,20 @@ Let's do one simple but significant change and make our `app.component.ts` use `
 `trackBy` is a crucial performance improvement when you iterate over non-primitive sets of data.
 We will optimize genres rendering in app-shell component.
 
-Go to `app-shell.component.ts` and create a `trackByGenre` function:
+In `app-shell.component.ts` import list model:
+
+```typescript
+// Exercise 3: Add TMDBMovieGenreModel import here
+
+import { TMDBMovieGenreModel } from "../data-access/api/model/movie-genre.model";
+```
+
+Create a `trackByGenre` function in the same file:
 
 ```typescript
   // Exercise 3: Create trackBy function here
 
-  trackByGenre(index: number, genre: TMDBMovieGenreModel) {
+  trackByGenre(_: number, genre: TMDBMovieGenreModel) {
     return genre.name;
   }
 ```
@@ -69,7 +77,12 @@ Go to `app-shell.component.html` and add our function to template:
   class="navigation--link"
   [routerLink]="['/list', 'genre', genre.id]"
   routerLinkActive="active"
-></a>
+>
+  <div class="navigation--menu-item">
+    <svg-icon class="navigation--menu-item-icon" name="genre"></svg-icon>
+    {{ genre.name }}
+  </div>
+</a>
 ```
 
 ### Pro tip
@@ -126,6 +139,14 @@ However `switchMap` can cause an over-fetching. For requests that will not chang
 This operator will ignore all higher observable emissions until it's observable finished.
 
 This will help us improve TTI and TBT metrics.
+
+Go to `genre.state.ts`, add import of `exhaustMap` and remove `switchMap`:
+
+```typescript
+// Exercise 3: Replace switchMap with exhaustMap
+
+import { exhaustMap } from "rxjs";
+```
 
 Go to `genre.state.ts` and switch to `exhaustMap`:
 
