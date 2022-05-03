@@ -10,6 +10,6 @@ if (environment.production) {
 
 // Exercise 2: Wrap platformBrowserDynamic into setTimeout
 platformBrowserDynamic()
-// Exercise 5: Add {ngZone: 'noop'} as second argument
-.bootstrapModule(AppModule)
-.catch((err) => console.error(err));
+  // Exercise 5: Add {ngZone: 'noop'} as second argument
+  .bootstrapModule(AppModule)
+  .catch((err) => console.error(err));

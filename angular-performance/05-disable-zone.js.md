@@ -106,5 +106,23 @@ export class ZonelessRouting extends RxEffects {
 }
 ```
 
+Go to `app.component.ts` and add import of our service:
+
+```typescript
+// Exercise 5: Import zone-les routing here.
+
+import { ZonelessRouting } from "./shared/zone-less/zone-less-routing.service";
+```
+
+Create constructor and initialize it:
+
+```typescript
+// Exercise 5: Use zone-less routing
+
+ constructor(private zonelessRouting: ZonelessRouting) {
+       this.zonelessRouting.init();
+     }
+```
+
 Another problem is that all our `async` pipes are broken because it can not work without `zone.js`.
 We will fix it in next exercise.

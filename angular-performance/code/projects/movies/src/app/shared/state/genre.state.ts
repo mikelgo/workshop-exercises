@@ -1,5 +1,8 @@
 import { RxState } from '@rx-angular/state';
 import { Injectable } from '@angular/core';
+
+// Exercise 3: Replace switchMap with exhaustMap
+
 import { switchMap } from 'rxjs';
 import { RxActionFactory } from '../rxa-custom/actions';
 import {
@@ -35,7 +38,6 @@ export class GenreState extends RxState<State> implements AppInitializer {
     this.connect(
       'genres',
       this.actions.refreshGenres$.pipe(
-
         // Exercise 3: Use exhaustMap here
 
         switchMap(this.genreResource.getGenres)

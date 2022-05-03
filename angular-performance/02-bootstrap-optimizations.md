@@ -14,10 +14,10 @@ Go to `main.ts` file and wrap `platformBrowserDynamic` call into `setTimeout`:
 ```typescript
 // Exercise 2: Wrap platformBrowserDynamic into setTimeout
 setTimeout(() =>
-    platformBrowserDynamic()
-    // Exercise 11: Add {ngZone: 'noop'} as second argument
+  platformBrowserDynamic()
+    // Exercise 5: Add {ngZone: 'noop'} as second argument
     .bootstrapModule(AppModule)
-    .catch((err) => console.error(err));
+    .catch((err) => console.error(err))
 );
 ```
 
@@ -80,15 +80,19 @@ Near `app.module.ts` create `state-app-initializer.provider.ts` with following c
 
 ```typescript
 import { APP_INITIALIZER } from "@angular/core";
-import { getGenresCached } from "./data-access/api/resources/genre.resource";
+import { GenreResource } from "./data-access/api/resources/genre.resource";
 import { MovieState } from "./shared/state/movie.state";
 import { RouterState } from "./shared/router/router.state";
 import { take } from "rxjs";
 
-function initializeState(movieState: MovieState, routerState: RouterState) {
+function initializeState(
+  movieState: MovieState,
+  routerState: RouterState,
+  genreResource: GenreResource
+) {
   return (): void => {
     // sideBar prefetch
-    getGenresCached().pipe(take(1)).subscribe();
+    genreResource.getGenresCached().pipe(take(1)).subscribe();
     // initial route prefetch
     routerState.routerParams$
       .pipe(take(1))
@@ -115,7 +119,7 @@ export const GLOBAL_STATE_APP_INITIALIZER_PROVIDER = [
   {
     provide: APP_INITIALIZER,
     useFactory: initializeState,
-    deps: [MovieState, RouterState],
+    deps: [MovieState, RouterState, GenreResource],
     multi: true,
   },
 ];
@@ -140,36 +144,9 @@ providers: [
     ...
 ```
 
-## Optimize router bootstrap performance
+## Optimize initial route
 
-Initially router doing a sync initial navigation. To improve TBT we can disable this behavior.
-
-Go to `app.routing.ts` and extend `RouterModule.forRoot()` with following:
-
-```typescript
-  RouterModule.forRoot(ROUTES, {
-    enableTracing: false,
-
-    // Exercise 2: Disable route initial navigation here.
-
-    initialNavigation: 'disabled',
-    ...
-```
-
-However app should perform initial navigation anyway, so we should schedule it in router-outlet wrapper component.
-In our case it is an `app-shell.component.ts`. Extend constructor with following:
-
-```typescript
-// Exercise 2: Schedule navigation here
-
-setTimeout(() =>
-  this.router.navigate([fallbackRouteToDefault(document.location.pathname)])
-);
-```
-
-## Bonus tip: optimize routes with same UI
-
-This tip will improve TTI and TBT metrics.
+This will improve TTI and TBT metrics.
 
 If you have routes with the same UI but different data implement it with 2 parameters instead of 2 different routes.
 This saves creation-time and destruction-time of the component and also render work in the browser.
@@ -192,4 +169,39 @@ Go to `app.routing.ts` and replace this routes with single one:
         path: 'list/:type/:identifier',
         component: MovieListPageComponent,
     },
+```
+
+## Optimize router bootstrap performance
+
+Initially router doing a sync initial navigation. To improve TBT we can disable this behavior.
+
+Go to `app.routing.ts` and extend `RouterModule.forRoot()` with following:
+
+```typescript
+  RouterModule.forRoot(ROUTES, {
+    enableTracing: false,
+
+    // Exercise 2: Disable route initial navigation here.
+
+    initialNavigation: 'disabled',
+    ...
+```
+
+However app should perform initial navigation anyway, so we should schedule it in router-outlet wrapper component.
+In our case it is an `app-shell.component.ts`. Add import of routing utility function:
+
+```typescript
+// Exercise 2: Add fallback util import here
+
+import { fallbackRouteToDefault } from "../routing-default.utils";
+```
+
+Extend constructor with following:
+
+```typescript
+// Exercise 2: Schedule navigation here
+
+setTimeout(() =>
+  this.router.navigate([fallbackRouteToDefault(document.location.pathname)])
+);
 ```

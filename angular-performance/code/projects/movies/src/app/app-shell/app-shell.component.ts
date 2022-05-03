@@ -18,6 +18,10 @@ import { getIdentifierOfTypeAndLayout } from '../shared/state/utils';
 import { GenreResource } from '../data-access/api/resources/genre.resource';
 import { RxEffects } from '@rx-angular/state/effects';
 
+// Exercise 2: Add fallback util import here
+
+// Exercise 3: Add TMDBMovieGenreModel import here
+
 // Exercise 4: Add setTimeout import here
 
 type Actions = {
