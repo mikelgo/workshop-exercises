@@ -141,7 +141,7 @@ In `app-shell.component.html` replace calls of `sideDrawerOpenToggle` with `side
 <ui-hamburger-button
   data-uf="menu-btn"
   class="ui-toolbar--action"
-  (click)="sideDrawerOpenToggle(!vs)"
+  (click)="sideDrawerOpenToggle.next(!vs)"
 >
   ...
 </ui-hamburger-button>
