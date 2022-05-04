@@ -2,6 +2,67 @@
 
 In this exercise we will focus on basic runtime optimizations in Angular application.
 
+## Create a dirty checks component
+
+First we create a component that will help us to debug change detection cycles in our application.
+
+Go to `shared` folder. Create `dirty-checks.component.ts` file with following content:
+
+```typescript
+import { Component, ElementRef, NgModule } from "@angular/core";
+
+@Component({
+  selector: "dirty-checks",
+  template: ` <code class="dirty-checks">({{ renders() }})</code> `,
+})
+export class DirtyChecksComponent {
+  private _renders = 0;
+
+  constructor(private elem: ElementRef) {}
+
+  renders() {
+    this.elem.nativeElement.children[0].innerHTML = ++this._renders;
+  }
+}
+
+@NgModule({
+  declarations: [DirtyChecksComponent],
+  exports: [DirtyChecksComponent],
+})
+export class DirtyChecksComponentModule {}
+```
+
+Add import in `app.module.ts`:
+
+```typescript
+// Exercise 3: Include dirty checks module import here.
+
+import { DirtyChecksComponentModule } from "./shared/dirty-checks.component";
+```
+
+And include it.
+
+```typescript
+// Exercise 3: Include dirty checks module
+    DirtyChecksModule,
+```
+
+Add `<dirty-checks>` component in `app.component.ts` template:
+
+```html
+template: `
+<!-- Exercise 3: Add dirty checks here -->
+<app-shell>
+  <dirty-checks></dirty-checks>
+  <router-outlet></router-outlet>
+</app-shell>
+`,
+```
+
+## Evaluate initial state of the application
+
+Serve your app and try to interact with the page. You will see counter always go up.
+
 ## Use `ChangeDetection.OnPush`
 
 By default all angular component using `ChangeDetectionStrategy.Default`.
