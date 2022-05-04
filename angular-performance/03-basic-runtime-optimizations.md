@@ -6,6 +6,27 @@ In this exercise we will focus on basic runtime optimizations in Angular applica
 
 First we create a component that will help us to debug change detection cycles in our application.
 
+Your task is to create a `DirtyChecksComponent` which should serve as a performance debug utility.
+Whenever the application renders, it should increase a number in its template.
+
+To do so, the component should bind a `renders()` function inside of the template which
+simply increase a local numeric variable everytime getting called.
+
+For the template use a `<code>` tag with the class `.dirty-checks`.
+
+<details>
+    <summary>hint for the template</summary>
+
+```html
+<code class="dirty-checks">({{ renders() }})</code> 
+```
+</details>
+
+Afterwards, use the component in the `AppComponents` template and serve the application.
+
+<details>
+    <summary>show solution</summary>
+
 Go to `shared` folder. Create `dirty-checks.component.ts` file with following content:
 
 ```typescript
@@ -18,10 +39,8 @@ import { Component, ElementRef, NgModule } from "@angular/core";
 export class DirtyChecksComponent {
   private _renders = 0;
 
-  constructor(private elem: ElementRef) {}
-
   renders() {
-    this.elem.nativeElement.children[0].innerHTML = ++this._renders;
+    return ++this._renders;
   }
 }
 
@@ -59,6 +78,8 @@ template: `
 `,
 ```
 
+</details>
+
 ## Evaluate initial state of the application
 
 Serve your app and try to interact with the page. You will see counter always go up.
@@ -90,6 +111,9 @@ Let's do one simple but significant change and make our `app.component.ts` use `
 
 - You can generate components with `OnPush` by default if you add next content to `angular.json` schematics:
 
+<details>
+    <summary>show solution</summary>
+
 ```json
 {
   "schematics": {
@@ -101,6 +125,8 @@ Let's do one simple but significant change and make our `app.component.ts` use `
   }
 }
 ```
+
+</details>
 
 - Use `@angular-eslint` plugins to force `OnPush` change detection.
 
