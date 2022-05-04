@@ -182,6 +182,14 @@ This will improve TTI and TBT metrics.
 If you have routes with the same UI but different data implement it with 2 parameters instead of 2 different routes.
 This saves creation-time and destruction-time of the component and also render work in the browser.
 
+Try to replace the current route configuration for `MovieListPageComponent` so that it can re-use a single route
+instead of having it configured twice.
+
+You should visit `app.routing.ts`. Change the `list` routing configuration so that it accepts `:type/:indefier` as arguments.
+
+<details>
+    <summary>show solution</summary>
+
 Go to `app.routing.ts` and replace this routes with single one:
 
 ```typescript
@@ -189,11 +197,11 @@ Go to `app.routing.ts` and replace this routes with single one:
     // Exercise 2: Replace next 2 routes
 
     // {
-    //     path: 'list-category/:category',
+    //     path: 'list/category/:category',
     //     component: MovieListPageComponent,
     // },
     // {
-    //     path: 'list-genre/:genre',
+    //     path: 'list/genre/:genre',
     //     component: MovieListPageComponent,
     // }
     {
@@ -202,9 +210,16 @@ Go to `app.routing.ts` and replace this routes with single one:
     },
 ```
 
+</details>
+
 ## Optimize router bootstrap performance
 
-Initially router doing a sync initial navigation. To improve TBT we can disable this behavior.
+Initially router doing a sync initial navigation.
+To improve TBT we can disable this behavior by adding `initialNavigation: 'disabled'` as configuration
+for our `RouterModule.forRoot` config.
+
+<details>
+    <summary>show solution</summary>
 
 Go to `app.routing.ts` and extend `RouterModule.forRoot()` with following:
 
@@ -212,14 +227,24 @@ Go to `app.routing.ts` and extend `RouterModule.forRoot()` with following:
   RouterModule.forRoot(ROUTES, {
     enableTracing: false,
 
-    // Exercise 2: Disable route initial navigation here.
-
     initialNavigation: 'disabled',
     ...
 ```
 
+</details>
+
 However app should perform initial navigation anyway, so we should schedule it in router-outlet wrapper component.
-In our case it is an `app-shell.component.ts`. Add import of routing utility function:
+In our case it is in `app-shell.component.ts`.
+
+Use any scheduling technique (`setTimeout`, ....) in order to schedule the function
+`fallbackRouteToDefault` inside of the `AppShellComponents` constructor.
+
+The utility function can be found in this file `routing-default.utils.ts`.
+
+<details>
+    <summary>show solution</summary>
+
+Add import of routing utility function:
 
 ```typescript
 // Exercise 2: Add fallback util import here
@@ -230,9 +255,9 @@ import { fallbackRouteToDefault } from "../routing-default.utils";
 Extend constructor with following:
 
 ```typescript
-// Exercise 2: Schedule navigation here
-
 setTimeout(() =>
   this.router.navigate([fallbackRouteToDefault(document.location.pathname)])
 );
 ```
+
+</details>
