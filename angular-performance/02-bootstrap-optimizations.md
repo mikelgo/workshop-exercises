@@ -7,6 +7,11 @@ In this exercise we will see how we can improve Angular application bootstrap ti
 First thing that we do is a split of application bootstrap into several tasks. This way we will improve [Total Blocking Time (TBT) metric](https://web.dev/i18n/en/tbt/).
 We don't want to trigger style recalculation so we avoid `requestAnimationFrame` and use `setTimeout`.
 
+Search for the `platformBrowserDynamic()` method call and wrap it with a `setTimeout`
+
+<details>
+    <summary>show solution</summary>
+
 Go to `main.ts` file and wrap `platformBrowserDynamic` call into `setTimeout`:
 
 <!-- TODO: Check ex number -->
@@ -21,6 +26,8 @@ setTimeout(() =>
 );
 ```
 
+</details>
+
 ## Create scheduled app initializer
 
 We continue to improve TBT metric. Angular allows us to provide one or several initialization functions.
@@ -28,7 +35,24 @@ With this approach we load data on application bootstrap time instead of compone
 
 First let's create `SCHEDULED_APP_INITIALIZER_PROVIDER`.
 
-GCreate `chunk-app-initializer.provider.ts` near `app.module.ts` with following content:
+The provider should `provide` an `APP_INITIALIZER` with a factory that returns `() => Promise<void>`. 
+You can try different scheduling techniques internally here if you like.
+
+```ts
+// default factory fn
+
+() => (): Promise<void> =>
+    new Promise<void>((resolve) => {
+        setTimeout(() => resolve());
+    }),
+```
+
+After creating your `SCHEDULED_APP_INITIALIZER_PROVIDER`, import it in the `app.module.ts`
+
+<details>
+    <summary>show solution</summary>
+
+Create `chunk-app-initializer.provider.ts` near `app.module.ts` with following content:
 
 ```typescript
 import { APP_INITIALIZER } from "@angular/core";
@@ -71,10 +95,15 @@ providers: [
     ...
 ```
 
+</details>
+
 ## Create global state initializer
 
 We can also create an initializer for our application core state.
 Loading of most important state pieces on application init reduces LCP and also improves [Time To Interactive (TTI) metric](https://web.dev/i18n/en/tti/).
+
+<details>
+    <summary>show solution</summary>
 
 Near `app.module.ts` create `state-app-initializer.provider.ts` with following content:
 
@@ -143,6 +172,8 @@ providers: [
     GLOBAL_STATE_APP_INITIALIZER_PROVIDER,
     ...
 ```
+
+</details>
 
 ## Optimize initial route
 
