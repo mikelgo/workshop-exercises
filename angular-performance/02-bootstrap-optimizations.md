@@ -17,10 +17,9 @@ Go to `main.ts` file and wrap `platformBrowserDynamic` call into `setTimeout`:
 <!-- TODO: Check ex number -->
 
 ```typescript
-// Exercise 2: Wrap platformBrowserDynamic into setTimeout
+// Wrap platformBrowserDynamic into setTimeout
 setTimeout(() =>
   platformBrowserDynamic()
-    // Exercise 5: Add {ngZone: 'noop'} as second argument
     .bootstrapModule(AppModule)
     .catch((err) => console.error(err))
 );
@@ -89,7 +88,7 @@ Provide it in `app.module.ts` providers array:
 ```typescript
 providers: [
     ...
-    // Exercise 2: Include app intializer import here.
+    // Include app intializer import here.
 
     SCHEDULED_APP_INITIALIZER_PROVIDER,
     ...
@@ -167,8 +166,7 @@ Provide it in `app.module.ts` providers array:
 ```typescript
 providers: [
     ...
-    // Exercise 2: Include state intializer import here.
-
+    // Include state intializer import here.
     GLOBAL_STATE_APP_INITIALIZER_PROVIDER,
     ...
 ```
@@ -186,7 +184,7 @@ Go to `app.routing.ts` and replace this routes with single one:
 
 ```typescript
 
-    // Exercise 2: Replace next 2 routes
+    // Replace next 2 routes
 
     // {
     //     path: 'list-category/:category',
@@ -212,7 +210,7 @@ Go to `app.routing.ts` and extend `RouterModule.forRoot()` with following:
   RouterModule.forRoot(ROUTES, {
     enableTracing: false,
 
-    // Exercise 2: Disable route initial navigation here.
+    // Disable route initial navigation here.
 
     initialNavigation: 'disabled',
     ...
@@ -230,7 +228,7 @@ import { fallbackRouteToDefault } from "../routing-default.utils";
 Extend constructor with following:
 
 ```typescript
-// Exercise 2: Schedule navigation here
+// Schedule navigation here
 
 setTimeout(() =>
   this.router.navigate([fallbackRouteToDefault(document.location.pathname)])
