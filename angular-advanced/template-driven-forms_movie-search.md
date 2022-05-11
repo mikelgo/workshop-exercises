@@ -209,7 +209,7 @@ routing.
 Now the only piece left is to have the `NgModelBinding` inside of our template in
 order to react to changes from the user.
 
-Go to `AppShellComponents` template and use the `[(ngModel)]` binding
+Go to `AppShellComponent`s template and use the `[(ngModel)]` binding
 to bind your searchValue property to the components changes.
 
 <details>
@@ -221,6 +221,21 @@ to bind your searchValue property to the components changes.
 <ui-search-bar
         [(ngModel)]="searchValue"
 ></ui-search-bar>
+```
+
+You also need to import `ForModule` from '@angular/forms' into the `AppShellModule` 
+
+```ts
+// app-shell.module.ts
+import { FormsModule } from '@angular/forms';
+
+{
+    imports: [
+        /** other imports **/,
+        FormsModule
+    ]
+}
+
 ```
 
 </details>
