@@ -94,7 +94,7 @@ myMovieForm = new FormGroup({
     comment: new FormControl(''),
 });
 
-save(): void {
+add(): void {
     console.log(this.myMovieForm.value, 'movieToStore');
     this.reset();
 }
@@ -113,7 +113,7 @@ reset(): void {
 When implementing the template, consider the following things:
 
 Bind the `formGroup` and the `ngSubmit` method:  
-`form [formGroup]="myMovieForm" (ngSubmit)="save()"`
+`form [formGroup]="myMovieForm" (ngSubmit)="add()"`
 
 Have an input for the `title` control, use `formControlName` directive:  
 `input formControlName="title"`
@@ -131,7 +131,7 @@ Have at least one button, if you go for two, mark the one as `submit` and the ot
 
 ```html
 <!-- my-movie-list.component.html -->
-<form [formGroup]="myMovieForm" (ngSubmit)="save()">
+<form [formGroup]="myMovieForm" (ngSubmit)="add()">
     <div class="form-group">
         <label for="title">Title</label>
         <input id="title" type="text" formControlName="title">
@@ -237,12 +237,12 @@ properties on the fly.
 Implement the methods following methods in `MovieService`:
 
 * `getFavorites(): (MovieModel & { comment: string})[]` 
-* `saveFavorite(movie: MovieModel & { comment: string })`
+* `upsertFavorite(movie: MovieModel & { comment: string })`
 
 The `getFavorites()` method should simple return a `JSON.parsed` value from `localStorage.getItem('my-movies')` or an empty
 array in case of no value exists.
 
-The `saveFavorite` method should take care of adding and/or updating (we get to this later) the given `Movie` and store the
+The `upsertFavorite` method should take care of adding and/or updating (we get to this later) the given `Movie` and store the
 updated array via `localStorage.setItem('my-movies')`.
 
 For the sake of simplicity, please use the helper function `upsert` from `@rx-angular/cdk/transformations`.
@@ -262,7 +262,7 @@ getFavorites(): (MovieModel & { comment: string })[] {
     return JSON.parse(localStorage.getItem('my-movies')) || [];
 }
 
-saveFavorite(movie: MovieModel & { comment: string }) {
+upsertFavorite(movie: MovieModel & { comment: string }) {
     const favorites = upsert(this.getFavorites(), movie, 'title');
     localStorage.setItem('my-movies', JSON.stringify(favorites));
 }
@@ -274,7 +274,7 @@ saveFavorite(movie: MovieModel & { comment: string }) {
 Heading back to the `MyMovieListComponent` we can now use the `MovieService`s data in order to display a list of movies.
 
 Create a local variable `myMovies` and assign it to `MovieService#getFavorites()`.
-On form submission (`save()`), instead of `console.log` the value, send it to the `saveFavorite()` method and re-assign
+On form submission (`add()`), instead of `console.log` the value, send it to the `upsertFavorite()` method and re-assign
 the `myMovies` property to the latest value of `MovieService#getFavorites()`.
 
 <details>
@@ -285,8 +285,8 @@ the `myMovies` property to the latest value of `MovieService#getFavorites()`.
 
 myMovies = this.movieService.getFavorites();
 
-save(): void {
-    this.movieService.saveFavorite(this.myMovieForm.value);
+add(): void {
+    this.movieService.upsertFavorite(this.myMovieForm.value);
     this.reset();
     this.myMovies = this.movieService.getFavorites();
 }
@@ -328,6 +328,11 @@ Finally, add the styles to improve the UX.
   padding: 1rem 0.5rem;
   display: flex;
   font-size: var(--text-lg);
+  align-items: center;
+  
+  .btn {
+    overflow: hidden;
+  }
 }
 
 .movie-title {

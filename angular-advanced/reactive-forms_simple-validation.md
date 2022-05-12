@@ -34,9 +34,9 @@ myMovieForm = new FormGroup({
     ]),
 });
 
-save(): void {
+add(): void {
     if (this.myMovieForm.valid) {
-        this.movieService.saveFavorite(this.myMovieForm.value);
+        this.movieService.upsertFavorite(this.myMovieForm.value);
         this.reset();
         this.myMovies = this.movieService.getFavorites();
     }
@@ -74,9 +74,9 @@ You should also prepare a helper function in your component which should tell th
 
 ```ts
 // my-movie-list.component.ts
-save(): void {
+add(): void {
     if (this.myMovieForm.valid) {
-        this.movieService.saveFavorite(this.myMovieForm.value);
+        this.movieService.upsertFavorite(this.myMovieForm.value);
         this.reset();
         this.myMovies = this.movieService.getFavorites();
     } else {
@@ -124,6 +124,7 @@ If you want, you can also add styles in order to make the error messages appear 
 
 .error {
     color: darkred;
+    font-size: var(--text-sm);
 }
 ```
 
