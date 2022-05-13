@@ -88,7 +88,7 @@ const movies: MovieModel[] = [
 
 In order to proceed and properly use the `MovieListComponent` we need to make sure all of its dependencies are in place.
 For this, you want to add `RouterTestingModule` and `MovieModule` to the `imports` of your `TestBed#configureTestingModule` 
-function.
+function. Since `MovieModule` already exports `MovieListComponent` we don't need to re-declare it here. You can safely remove it from the testbed
 
 <details>
     <summary>Setup TestBed</summary>
@@ -99,7 +99,7 @@ function.
 beforeEach(async () => {
     await TestBed.configureTestingModule({
         imports: [RouterTestingModule, MovieModule],
-        declarations: [MovieListComponent],
+        declarations: [],
     }).compileComponents();
 });
 
@@ -191,4 +191,177 @@ npm run test -- --testNamePattern=^MovieListComponent  --runTestsByPath ./src/ap
 
 ## Integration Test
 
-TBD
+Up until this point, we only tested completely isolated behavior of single components. Let's get to the next step
+and implement our first integration test.
+
+### Setup TestComponent
+
+Since we want to integrate the `MovieListComponent` we need a new component serving the purpose.
+Stay in the `movie-list.component.spec.ts` file and add a new `@Component` definition for `MovieListTestComponent`.
+The template should only define the `movie-list` component.
+
+To make our life easier, add a `@ViewChild` selector for the `movie-list` component.
+
+<details>
+    <summary>MovieListTestComponent</summary>
+
+```ts
+// movie-list.component.spec.ts
+
+@Component({
+    selector: 'movie-list-test',
+    template: `<movie-list [movies]="movies"></movie-list>`,
+})
+export class MovieListTestComponent {
+    @ViewChild(MovieListComponent) movieListComponent;
+    
+    movies = movies;
+}
+
+```
+
+</details>
+
+### Setup TestBed
+
+In order to properly use the `MovieListTestComponent` and integrate the `MovieListComponent` we need to make sure the
+`TestBed` is configured properly.
+
+Since we want to create a new `TestBed` for our integration test, add a new `describe('MovieListComponent integration', () => {})` block.
+
+Also add the two `beforeEach` blocks already existing in the first set of tests as a baseline for the new testsuite.
+
+Adjust the `TestBed` according to our needs.  
+For this, you want to add `RouterTestingModule` and `MovieModule` to the `imports` of your `TestBed#configureTestingModule`
+function. Also add the `MovieListTestComponent` to the `declarations`.
+
+<details>
+    <summary>Setup TestBed</summary>
+
+```ts
+// movie-list.component.spec.ts
+
+describe('MovieListComponent integration', () => {
+    
+    let component: MovieListTestComponent;
+    let fixture: ComponentFixture<MovieListTestComponent>;
+    
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [RouterTestingModule, MovieModule],
+            declarations: [MovieListTestComponent],
+        }).compileComponents();
+    });
+    
+    beforeEach(() => {
+        fixture = TestBed.createComponent(MovieListTestComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+});
+
+```
+
+</details>
+
+### Implement integration Tests
+
+Now everything is in place! Let's implement three test cases in an integration scenario.
+The three tests we want to implement:
+
+* it `should be accessible as ViewChild`
+* it `should receive inputs from other components`
+* it `should render movie-cards`
+
+
+#### should be accessible as ViewChild
+
+This test should just check if the `MovieListComponent` is accessible (`toBeTruthy()`) as the `movieListComponent` property
+in the `MovieListTestComponent`.
+
+<details>
+    <summary>Show solution</summary>
+
+```ts
+// movie-list.component.spec.ts
+
+it('should be accessible as ViewChild', () => {
+    // assert
+    expect(fixture.componentInstance).toBeTruthy();
+});
+```
+
+</details>
+
+Execute the test suite and watch your test fail or pass :)
+
+```bash
+npm run test -- --testNamePattern=^MovieListComponent  --runTestsByPath ./src/app/movie/movie-list/movie-list.component.spec.ts
+```
+
+#### should receive inputs from other components
+
+This test case should check if the `@Input` binding works. Please check if the `movieListComponent.movies` is equal to
+the `movies` property of the `MovieListTestComponent`.
+
+<details>
+    <summary>Show solution</summary>
+
+```ts
+// movie-list.component.spec.ts
+
+it('should receive inputs from other components', () => {
+    // assert
+    expect(fixture.componentInstance.movies).toEqual(movies);
+});
+```
+
+</details>
+
+Execute the test suite and watch your test fail or pass :)
+
+```bash
+npm run test -- --testNamePattern=^MovieListComponent  --runTestsByPath ./src/app/movie/movie-list/movie-list.component.spec.ts
+```
+
+#### should render movie-cards
+
+Let's migrate the test case we've already implemented as isolated unit test to our integration test suite. We want to check
+if our `MovieListComponent` correctly renders `movie-card`s based on the given input.
+
+You can again read the children from `fixture.nativeElement.querySelectorAll()` and perform an assertion on the result.
+
+<details>
+    <summary>Show solution</summary>
+
+```ts
+// movie-list.component.spec.ts
+
+it('should render movie-cards', () => {
+    // arrange
+    const movieChildren = Array.from(
+        fixture.nativeElement.querySelectorAll('movie-card')
+    );
+    
+    // act
+    // no action required, the framework does it's work
+    
+    // assert
+    expect(movieChildren.length).toEqual(movies.length);
+});
+```
+
+</details>
+
+Execute the test suite and watch your test fail or pass :)
+
+```bash
+npm run test -- --testNamePattern=^MovieListComponent  --runTestsByPath ./src/app/movie/movie-list/movie-list.component.spec.ts
+```
+
+#### Bonus: should react to input changes
+
+Add a new test case which tests if the `MovieListComponent` reacts to input changes after you've set them on the
+`MovieListTestComponent`s componentInstance.
+
+Hint: use `fixture.detectChanges()` after you've changed the input :)
