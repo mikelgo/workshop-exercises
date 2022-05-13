@@ -1,4 +1,4 @@
-# Testing - Simple Unit Tests
+# Testing - Pipes
 
 In this exercise we will get to know the basics of unit testing in angular.
 By following the arrange => act => assert pattern, we will cover how to implement a basic set of unit tests for a `Pipe`.
