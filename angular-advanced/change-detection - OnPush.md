@@ -6,7 +6,7 @@ the `ChangeDetection` system in angular.
 ## Goal
 
 The goal of this exercise is to give you a deep understanding of the `ChangeDetection` system in angular. We will learn
-how to optimize our applications runtime performance by built in tools like the `trackBy function` and the `ChangeDetectionStrategy.OnPush`.
+how to optimize our applications runtime performance by using `ChangeDetectionStrategy.OnPush`.
 
 ## Create a dirty checks component
 
