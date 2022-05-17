@@ -62,7 +62,7 @@ viewModel$ = this.state.select();
 
 ```
 
-Inject instance in constructor
+Inject state instance in constructor
 
 ```ts
 // app-shell.component.ts
@@ -99,6 +99,7 @@ The task now is to replace each of the properties (`sideDrawerOpen, searchValue,
 * sideDrawerOpen
   * either create a `sideDrawerOpen$: Subject<boolean>` and `next` it in the template on `openedChange`
   * or create a callback function for the `openedChange` event and call `state.set({sideDrawerOpen: val...})`
+  * should be set to false in case of a route change
 * searchValue
   * either create a `searchValue$: Subject<string>` and `next` it in the template on `ngModelChange`
   * or call `state.set({searchValue: value})` in the setter of `searchValue`
@@ -141,8 +142,34 @@ this.state.connect('sideDrawerOpen', this.sideDrawerOpen$);
 
 ```
 
+`sideDrawerOpen` should also be set to `false` in case of any route change.
+
+The current implementation treats this as side effect since we
+are `subscribing` to `this.router.events`.
+
+We want to turn the subscription into an `Observable<boolean>`, emitting `false` instead of setting it to the state.
+
+```ts
+// app-shell.component.ts
+
+// onInit
+
+const sideDrawerOnNavigation$ = this.router.events
+        .pipe(
+                filter((e) => e instanceof NavigationEnd),
+                map((e) => (e as NavigationEnd).urlAfterRedirects),
+                distinctUntilChanged(),
+                map(() => false)
+        );
+
+this.state.connect('sideDrawerOpen', sideDrawerOnNavigation$);
+
+```
+
 </details>
 
+As a final overview, watch the complete component code. You should already see the benefits of this refactoring
+at a first glance. The code looks nice and clean.
 
 <details>
     <summary>Complete component code</summary>
@@ -222,7 +249,34 @@ top-level `ng-container` with `viewModel$`
 </ng-container>
 ```
 
-adjust the template for `searchValue` usage, we need to `next` our subject and set the `searchValue` as input for `query`
+adjust the bindings for `ui-side-drawer`, we want to update our state on `openedChange` and bind the `vm.sideDrawerOpen` value
+to the `[opened]` input.
+
+```html
+<!--app-shell.component.html-->
+
+<ui-side-drawer
+        [opened]="vm.sideDrawerOpen"
+        (openedChange)="sideDrawerOpen$.next($event)"
+>
+<!--    the template-->
+</ui-side-drawer>
+```
+
+adjust the bindings for `ui-hamburger-button`, we want to update our state `sideDrawerOpen` state on `click` with the
+negated current value of `vm.sideDrawerOpen`.
+
+```html
+<!--app-shell.component.html-->
+
+<ui-search-bar
+        (searchSubmit)="searchValue$.next($event)"
+        [query]="searchValue"
+></ui-search-bar>
+```
+
+adjust the bindings for `ui-search-bar`, we want to update our state on `searchSubmit` and bind the `vm.searchValue`
+to the `query` input.
 
 ```html
 <!--app-shell.component.html-->
@@ -235,7 +289,69 @@ adjust the template for `searchValue` usage, we need to `next` our subject and s
 
 </details>
 
-### SideEffects
+Our local state management is now fully reactive. The major part of the refactoring is finished, you can serve the
+application now and see if everything went well. 
 
-* when `searchValue` changes, navigate to `['search', searchValue]`
+Everything besides the navigation to `/search` should work now.
+
+```bash
+ng serve
+```
+
+### SideEffect: Navigate on searchValue change
+
+As a final step we want to re-introduce the missing side effect. Whenever the `searchValue` changes, 
+the `AppShellComponent` should trigger a navigation to `['search', searchValue]`
+
+We already have the trigger for the state change (`searchValue$`) in place. We can use it as trigger for our side effect
+as well.
+
+You can also rely on `state.select('searchValue')`, but keep in mind that you want to skip the initial emission.
+This way, you would navigate to `search` immediately on bootstrap.
+
+But, there is another property you can use in order to only receive updates on a value without having to think about
+any initial value. `state.$.pipe(select('searchValue'))` will provide you with only changes to the `searchValue` property
+of your state.
+
+Whatever source/trigger you choose, use the `state.hold()` method in order to manage the side effect.
+
+```ts
+state.hold(
+    // effect trigger
+    trigger$,
+    // effect function
+    () => {}
+)
+```
+
+<details>
+  <summary>SideEffect: Navigate on searchValue change</summary>
+
+
+```ts
+
+
+ngOnInit() {
+ // ** all the rest ** /
+  // side effects
+  this.state.hold(
+          this.searchValue$,
+          searchValue => this.navToSearch(searchValue)
+  ); 
+}
+
+// dedicated function for side effect
+private navToSearch(value: string) {
+    this.router.navigate(['search', value]);
+}
+```
+</details>
+
+Congratulations, you have successfully turned the `AppShellComponent` into a proper state machine :-)
+
+Serve the application and test if everything is working fine
+
+```bash
+ng serve
+```
 
