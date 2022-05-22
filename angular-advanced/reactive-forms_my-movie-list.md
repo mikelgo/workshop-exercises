@@ -44,7 +44,7 @@ const routes: Routes = [
     declarations: [MyMovieListComponent],
     imports: [MovieModule, RouterModule.forChild(routes)],
 })
-export class MovieSearchPageModule {}
+export class MyMovieListModule {}
 ```
 
 </details>
