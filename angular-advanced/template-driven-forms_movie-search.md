@@ -54,10 +54,10 @@ the `MovieSearchPageComponent` on `''` path.
 
 ```bash
 # create module
-ng g m movie/movie-search
+ng g m movie/movie-search-page
 
 # create component
-ng g c movie/movie-search
+ng g c movie/movie-search-page
 ```
 
 implement `MovieSearchPageModule`
